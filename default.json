@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate preset for all belfry-project repositories",
+  "extends": [
+    "config:recommended",
+    "group:allNonMajor"
+  ],
+  "dependencyDashboard": true,
+  "timezone": "Europe/Brussels",
+  "schedule": ["before 7am on monday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "rebaseWhen": "conflicted",
+  "packageRules": [
+    {
+      "description": "Keep GitHub Actions updates together and pin them to a commit",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "pinDigests": true
+    }
+  ]
+}
