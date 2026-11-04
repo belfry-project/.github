@@ -4,7 +4,15 @@
 
 Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry aims to keep a working, regularly released, fully open distribution available, built and hosted entirely on GitHub.
 
-> **Status: early setup.** The repositories currently contain the imported upstream history. Rebranding, pinned dependencies and the first build pipelines are in progress. There are no Belfry releases yet.
+> **Status: early setup.** Dependencies are pinned and the first images are being published to `ghcr.io/belfry-project`. Rebranding and the release process are in progress. There are no Belfry releases yet.
+
+## The name
+
+A *belfry* is the bell tower of a building: the place from which a bell signals and coordinates everything around it, much like an automation controller coordinates the hosts it manages.
+
+The name is also a nod to where this software comes from. AWX was open-sourced by Red Hat in 2017 as the upstream project of **Ansible Tower**, later part of Red Hat Ansible Automation Platform. Belfry continues that line, and the tower is still in the name.
+
+Belfry was started in November 2026, after upstream AWX releases had been paused for more than two years, to keep a community-maintained, openly released version available.
 
 ## Repositories
 
@@ -27,4 +35,4 @@ Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry 
 
 Belfry builds on the work of the AWX, AWX Operator and Ansible UI contributors, and keeps their full commit history and licenses.
 
-Belfry is an independent project. It is not affiliated with, endorsed by or sponsored by Red Hat, Inc. or the Ansible project. AWX and Ansible are trademarks of Red Hat, Inc.
+Belfry is an independent project. It is not affiliated with, endorsed by or sponsored by Red Hat, Inc. or the Ansible project. AWX, Ansible and Ansible Tower are trademarks of Red Hat, Inc.
