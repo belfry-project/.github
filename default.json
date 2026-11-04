@@ -7,17 +7,33 @@
   ],
   "dependencyDashboard": true,
   "timezone": "Europe/Brussels",
-  "schedule": ["before 7am on monday"],
+  "schedule": [
+    "before 7am on monday"
+  ],
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "rebaseWhen": "conflicted",
   "packageRules": [
     {
       "description": "Keep GitHub Actions updates together and pin them to a commit",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "GitHub Actions",
       "pinDigests": true
+    },
+    {
+      "description": "Python versions in workflows are chosen deliberately to match the images; do not bump automatically",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchDepNames": [
+        "python"
+      ],
+      "enabled": false
     }
   ]
 }
