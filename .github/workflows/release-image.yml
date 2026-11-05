@@ -130,7 +130,7 @@ jobs:
           echo "${IMAGE}@${digest}"
 
       # Signed statement of which repository, commit and workflow built the image.
-      # Verify with: gh attestation verify oci://<image>:<version> --owner belfry-project
+      # Verify with: gh attestation verify oci://<image>:<version> --repo <calling repo> --signer-repo belfry-project/.github
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v4
         with:
@@ -231,7 +231,8 @@ jobs:
             echo
             echo "\`${IMAGE}:${VERSION}\` (\`${DIGEST}\`), for linux/amd64 and linux/arm64."
             echo
-            echo "Verify with \`gh attestation verify oci://${IMAGE}:${VERSION} --owner ${{ github.repository_owner }}\`."
+            echo "Verify the build provenance with \`gh attestation verify oci://${IMAGE}:${VERSION} --repo ${GH_REPO} --signer-repo ${{ github.repository_owner }}/.github --source-ref refs/tags/${VERSION}\`"
+            echo "(add \`--predicate-type https://spdx.dev/Document/v2.3\` for the SBOM)."
             echo "The SBOM (\`${FILES}.spdx.json\`) and the full scan (\`${FILES}-trivy.json\`) are attached below."
             echo
             cat "${FILES}-trivy.md"
