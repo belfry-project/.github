@@ -44,6 +44,8 @@ Do a dry run before each release (it takes about an hour, mostly the belfry buil
 
 ## Procedure
 
+Immutable releases must stay disabled in the four repositories: the workflows attach their assets after the release is published.
+
 Prerequisites: `gh` logged in with permission to create releases in all four repositories, `curl` and `jq`; optionally `docker` (to check the version inside the images), `helm` and `yq`.
 
 1. Check that `main` is green in all four repositories and that everything for the release is merged. The tag is created on the current `main` of each repository; `release.sh` shows the commits and failed checks before it asks to continue.
