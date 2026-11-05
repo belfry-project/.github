@@ -34,6 +34,17 @@
         "python"
       ],
       "enabled": false
+    },
+    {
+      "description": "Pin CentOS base images by digest; Renovate proposes digest refreshes on the regular schedule. Moving to a new CentOS Stream release stays a manual change.",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "quay.io/centos/centos"
+      ],
+      "pinDigests": true,
+      "groupName": "CentOS base images"
     }
   ],
   "customManagers": [
