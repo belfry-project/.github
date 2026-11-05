@@ -6,6 +6,8 @@ Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry 
 
 > **Status: early setup.** Dependencies are pinned and the first images are being published to `ghcr.io/belfry-project`. Rebranding and the release process are in progress. There are no Belfry releases yet.
 
+**[Documentation →](https://belfry-project.github.io/docs/)**: installing Belfry on Kubernetes, [migrating from AWX](https://belfry-project.github.io/docs/migrate/), backups, execution environments, and the [operator](https://belfry-project.github.io/docs/operator/) and [API](https://belfry-project.github.io/docs/belfry/) reference.
+
 **[Belfry vs AWX →](https://belfry-project.github.io/)**: what Belfry changes compared with the last AWX release, with component versions, support status and links to every change.
 
 ## The name
@@ -30,7 +32,8 @@ Belfry was started in November 2026, after upstream AWX releases had been paused
 ## Where things will live
 
 - **Container images:** `ghcr.io/belfry-project/*`
-- **Helm charts and documentation:** GitHub Pages
+- **Documentation:** [belfry-project.github.io/docs](https://belfry-project.github.io/docs/) (GitHub Pages)
+- **Helm charts:** GitHub Pages
 - **Ansible collection and CLI:** GitHub Releases
 
 ## Credits and trademarks
