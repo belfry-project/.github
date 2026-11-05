@@ -2,6 +2,15 @@
 
 Decisions about the Belfry project that affect users, with the reasoning, so they can be reviewed later. Newest first.
 
+## 2026-11-05: Release tags and `:latest`
+
+Discussed in [belfry#7](https://github.com/belfry-project/belfry/issues/7); the procedure is in [RELEASING.md](RELEASING.md).
+
+- **Tags:** `X.Y.Z` and `X.Y.Z-rc.N` for release candidates, **without a `v` prefix**, the same tag in belfry-ee, belfry, belfry-operator and helm-charts. The tag is used unchanged as the image tag, which is what the operator expects: it deploys `belfry:<DEFAULT_AWX_VERSION>` and `belfry-ee:<DEFAULT_AWX_VERSION>`, and upstream AWX, awx-ee and awx-operator tags have no prefix either, so existing tooling and docs keep working. `-rc.N` is semver pre-release syntax, so Helm treats release candidates as pre-releases, and it maps cleanly to PEP 440 (`1.0.0rc1`) for awxkit and the version the API reports.
+- **Release candidates** are GitHub pre-releases and never get `:latest`.
+- **`:latest`** of `belfry`, `belfry-ee` and `belfry-operator` is the **newest final release**, moved only by the release workflow. `:main` is the newest build of `main` (belfry-ee also `:main-<sha>`). Before, belfry-ee's `main` builds were also tagged `:latest`; `latest` for an image that is published by releases is commonly read as "newest stable release", and mixing both meanings would let a `main` build replace a release for anyone pulling `:latest`. Everything that meant "newest build" now uses `:main`: belfry's default `GLOBAL_JOB_EXECUTION_ENVIRONMENTS` and `CONTROL_PLANE_EXECUTION_ENVIRONMENT`, awxkit's default EE image, belfry CI's operator test, and the operator's "AWX EE (latest)" execution environment. Deployments by the operator still pair the app and the control plane EE by version tag.
+- **Chart version** = Belfry version, so `helm install --version 1.0.0` installs Belfry 1.0.0; the chart on `main` stays at `0.1.0`/`main` and is only published from releases.
+
 ## 2026-11-05: Version, CRD API group and rebrand scope for 1.0
 
 Discussed in [belfry#21](https://github.com/belfry-project/belfry/issues/21).
