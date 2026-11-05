@@ -35,5 +35,18 @@
       ],
       "enabled": false
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Tool versions in Makefiles, annotated with a '# renovate: datasource=... depName=...' comment on the line above",
+      "managerFilePatterns": [
+        "/(^|/)Makefile$/",
+        "/\\.mk$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\n[A-Za-z0-9_]+ \\?= (?<currentValue>\\S+)"
+      ]
+    }
   ]
 }
