@@ -47,6 +47,17 @@
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\n[A-Za-z0-9_]+ \\?= (?<currentValue>\\S+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "description": "Versions in YAML and Jinja templates, annotated with a '# renovate: datasource=... depName=...' comment on the line above",
+      "managerFilePatterns": [
+        "/\\.ya?ml(\\.j2)?$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\n\\s*[A-Za-z0-9_]+: [\"']?(?<currentValue>[^\"'\\s:]+)[\"']?\\n",
+        "# renovate: datasource=(?<datasource>docker) depName=(?<depName>\\S+)\\n\\s*image: [\"']?[^\"'\\s]+?:(?<currentValue>[^\"'\\s@:]+)[\"']?\\n"
+      ]
     }
   ]
 }
