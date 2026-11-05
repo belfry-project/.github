@@ -6,6 +6,8 @@ Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry 
 
 > **Status: early setup.** Dependencies are pinned and the first images are being published to `ghcr.io/belfry-project`. Rebranding and the release process are in progress. There are no Belfry releases yet.
 
+**[Belfry vs AWX →](https://belfry-project.github.io/)**: what Belfry changes compared with the last AWX release, with component versions, support status and links to every change.
+
 ## The name
 
 A *belfry* is the bell tower of a building: the place from which a bell signals and coordinates everything around it, much like an automation controller coordinates the hosts it manages.
