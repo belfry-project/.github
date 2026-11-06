@@ -38,7 +38,10 @@ Vulnerabilities in third-party dependencies should be reported to that project. 
 
 | Version | Supported |
 |---|---|
-| Images built from `main` (`:main`, `:latest`) | Yes, until the first release |
-| Belfry releases | Planned from 1.0: the latest release receives security fixes |
+| The latest Belfry release (`:latest`) | Yes: it receives security fixes |
+| Older releases | No: upgrade to the latest release |
+| Images built from `main` (`:main`) | Fixed on `main`, not a supported release |
+
+See [Releases and support](https://belfry-project.github.io/docs/releases/).
 
 Known vulnerabilities in the published images are scanned daily and shown on [belfry-project.github.io](https://belfry-project.github.io/).

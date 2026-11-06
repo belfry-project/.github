@@ -1,0 +1,12 @@
+---
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/belfry-project/.github/blob/main/SECURITY.md
+    about: Never in a public issue. Report vulnerabilities privately, as described in the security policy.
+  - name: Documentation and guides
+    url: https://belfry-project.github.io/docs/
+    about: Installing, migrating from AWX, upgrading, backups and the FAQ.
+  - name: Contributing guide
+    url: https://belfry-project.github.io/docs/contributing/
+    about: Where to report what, and how to send changes.
