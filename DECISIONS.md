@@ -2,6 +2,18 @@
 
 Decisions about the Belfry project that affect users, with the reasoning, so they can be reviewed later. Newest first.
 
+## 2026-11-06: AlmaLinux 10 and Python 3.14 for the images
+
+The `belfry` image (and the development images built from the same Dockerfile), `belfry-ee` and the operator's `init-projects` container are based on **AlmaLinux 10** (`quay.io/almalinuxorg/almalinux:10`, `:10-minimal` for the init container), and Belfry runs on **Python 3.14**. AWX 24.6.1 uses CentOS Stream 9 and Python 3.11/3.12.
+
+- **Why not stay on CentOS:** CentOS Stream is a rolling preview of the next RHEL minor release: packages land there before RHEL has released them, and there are no point releases to pin or test against. CentOS Stream 9 ends in 2027 and Stream 10 around 2030.
+- **Why AlmaLinux 10:** a free, redistributable rebuild of RHEL 10 with point releases, security errata and support until 2035. It has the same package names as RHEL and CentOS, so AWX's Dockerfile keeps its structure, and RHEL-based clients run the same distribution family they know.
+- **Alternatives considered:** Rocky Linux 10 (technically equivalent; we standardise on one of the two), Red Hat UBI 10 (its free repositories lack build packages the image needs, such as xmlsec1-devel, swig and libtool-ltdl-devel), Debian/Ubuntu (a rewrite of the Dockerfile without a gain), and Alpine or distroless images (no rsyslog or nginx in the base, and musl breaks prebuilt Python wheels).
+- **Python 3.14:** the newest Python in EL 10, with upstream support until 2030. It is installed from the distribution (`python3.14`, `python3.14-psycopg2`), and `requirements.txt` is compiled for it.
+- New major releases (AlmaLinux 11, a newer Python) are a manual change; Renovate only refreshes the digest of the pinned base images.
+
+([belfry#36](https://github.com/belfry-project/belfry/pull/36), [belfry-ee#16](https://github.com/belfry-project/belfry-ee/pull/16), [belfry-operator#29](https://github.com/belfry-project/belfry-operator/pull/29))
+
 ## 2026-11-05: Release tags and `:latest`
 
 Discussed in [belfry#7](https://github.com/belfry-project/belfry/issues/7); the procedure is in [RELEASING.md](RELEASING.md).
