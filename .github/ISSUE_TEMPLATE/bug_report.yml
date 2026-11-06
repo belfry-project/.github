@@ -1,0 +1,77 @@
+---
+name: Bug report
+description: Something in Belfry does not work as it should
+labels: [fix]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for concrete bugs. **Do not report security vulnerabilities here**: see the [security policy](https://github.com/belfry-project/.github/blob/main/SECURITY.md).
+        If the bug is in the application, the operator or the UI and you are not sure where to report it, [belfry](https://github.com/belfry-project/belfry/issues) is fine.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Please confirm
+      options:
+        - label: I follow the [Code of Conduct](https://github.com/belfry-project/.github/blob/main/CODE_OF_CONDUCT.md).
+          required: true
+        - label: I searched the existing issues for duplicates.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is the problem?
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Belfry version
+      description: The release (for example 1.0.0) or image tag and digest you use. The application reports its version at `/api/v2/ping/`.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operator or Helm chart version, Kubernetes distribution and version, execution environment image, browser if relevant.
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include error messages and relevant logs (remove secrets).
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional information
+      description: Anything else, for example whether it also happens in AWX.
+    validations:
+      required: false

@@ -1,0 +1,35 @@
+---
+name: Feature request
+description: Suggest a change or an addition
+labels: [feature]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Belfry stays close to upstream AWX, so small, focused changes are the easiest to accept.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Please confirm
+      options:
+        - label: I follow the [Code of Conduct](https://github.com/belfry-project/.github/blob/main/CODE_OF_CONDUCT.md).
+          required: true
+        - label: I searched the existing issues for duplicates.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature summary
+      description: What should change, and what problem does it solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: How it could work, alternatives you considered, and whether you would like to work on it.
+    validations:
+      required: false
