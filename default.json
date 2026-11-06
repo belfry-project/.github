@@ -36,15 +36,16 @@
       "enabled": false
     },
     {
-      "description": "Pin CentOS base images by digest; Renovate proposes digest refreshes on the regular schedule. Moving to a new CentOS Stream release stays a manual change.",
+      "description": "Pin base OS images by digest; Renovate proposes digest refreshes on the regular schedule. Moving to a new major release (AlmaLinux 11) stays a manual change.",
       "matchDatasources": [
         "docker"
       ],
       "matchPackageNames": [
+        "quay.io/almalinuxorg/almalinux",
         "quay.io/centos/centos"
       ],
       "pinDigests": true,
-      "groupName": "CentOS base images"
+      "groupName": "Base OS images"
     }
   ],
   "customManagers": [
