@@ -4,7 +4,7 @@
 
 Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry aims to keep a working, regularly released, fully open distribution available, built and hosted entirely on GitHub.
 
-> **Status: early setup.** Dependencies are pinned and the first images are being published to `ghcr.io/belfry-project`. Rebranding and the release process are in progress. There are no Belfry releases yet.
+> **Belfry 1.0.0 is released** ([release notes](https://github.com/belfry-project/belfry/releases/tag/1.0.0)). [Install it](https://belfry-project.github.io/docs/install/), or [migrate from AWX 24.6.1](https://belfry-project.github.io/docs/migrate/).
 
 **[Documentation →](https://belfry-project.github.io/docs/)**: installing Belfry on Kubernetes, [migrating from AWX](https://belfry-project.github.io/docs/migrate/), backups, execution environments, and the [operator](https://belfry-project.github.io/docs/operator/) and [API](https://belfry-project.github.io/docs/belfry/) reference.
 
