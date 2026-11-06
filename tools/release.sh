@@ -216,15 +216,21 @@ verify_repo() {
 # from the log of its "Determine the version" step (the run list does not show
 # the inputs); nothing while that step has not finished
 dispatch_inputs() {
-  local repo=$1 run=$2 cache job
+  local repo=$1 run=$2 cache job logs inputs
   cache="${state_dir}/${repo}-${run}"
   if [ ! -f "$cache" ]; then
     job=$(gh run view "$run" -R "${ORG}/${repo}" --json jobs \
       --jq '[.jobs[] | select(any(.steps[]; .name == "Determine the version" and .status == "completed"))] | .[0].databaseId // empty')
     [ -n "$job" ] || return 0
-    gh run view "$run" -R "${ORG}/${repo}" --job "$job" --log \
+    # The API, because `gh run view --log` waits for the whole run to finish.
+    # Newer gh versions refuse to print logs with escape sequences without
+    # --allow-escape-sequences; older ones do not know the option.
+    logs="repos/${ORG}/${repo}/actions/jobs/${job}/logs"
+    inputs=$({ gh api --allow-escape-sequences "$logs" 2> /dev/null || gh api "$logs"; } \
       | sed -nE 's/.*Z (version|dry_run)=([^ ]*)$/\1 \2/p' \
-      | awk '{a[$1] = $2} END {print a["version"], a["dry_run"]}' > "$cache"
+      | awk '{a[$1] = $2} END {if (a["version"] != "" && a["dry_run"] != "") print a["version"], a["dry_run"]}') || true
+    [ -n "$inputs" ] || return 0
+    echo "$inputs" > "$cache"
   fi
   cat "$cache"
 }
