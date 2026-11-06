@@ -287,6 +287,12 @@ for repo in "${REPOS[@]}"; do
   elif gh release view "$version" -R "${ORG}/${repo}" > /dev/null 2>&1; then
     echo "Release ${version} exists in ${repo}"
   else
+    # gh release create reuses an existing tag and ignores --target, so a tag
+    # left over from the imported upstream history would release old code.
+    if existing=$(gh api "repos/${ORG}/${repo}/commits/refs/tags/${version}" --jq .sha 2>/dev/null) \
+        && [ "$existing" != "${targets[$repo]}" ]; then
+      die "tag ${version} already exists in ${repo} at ${existing:0:10}, not at main ${targets[$repo]:0:10}; rename or remove it first"
+    fi
     args=(--target "${targets[$repo]}" --title "Belfry ${version}" --generate-notes)
     if $prerelease; then args+=(--prerelease --latest=false); else args+=(--latest); fi
     gh release create "$version" -R "${ORG}/${repo}" "${args[@]}"
