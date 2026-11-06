@@ -2,6 +2,12 @@
 
 Decisions about the Belfry project that affect users, with the reasoning, so they can be reviewed later. Newest first.
 
+## 2026-11-06: PostgreSQL 18 for the managed database
+
+The operator's managed database moves from PostgreSQL 15 (`quay.io/sclorg/postgresql-15-c9s`, supported until November 2027) to 18 (`quay.io/sclorg/postgresql-18-c10s`, supported until November 2030); sclorg publishes no 17. Existing installations are migrated on the first reconcile (a dump into a new PostgreSQL 18 instance, which needs a second volume of the same size and some downtime); external databases are not touched. Tested from AWX 24.6.1 and from belfry-operator 1.0.0, including backup and restore across versions ([belfry-operator#30](https://github.com/belfry-project/belfry-operator/pull/30)).
+
+Unlike Belfry's own images (AlmaLinux 10, see above), the database keeps sclorg's CentOS Stream image: no maintained non-Stream image has the layout the operator relies on (`POSTGRESQL_*` variables, `run-postgresql`, `/var/lib/pgsql/data/userdata`, UID 26). AlmaLinux publishes only base images, Red Hat's `rhel10/postgresql` images fall under the RHEL EULA, sclorg's Fedora images follow Fedora's 13-month lifecycle, and the Docker library image has another layout, which would need other templates and another data migration. The image runs only PostgreSQL, built from the same packages as RHEL 10. To revisit when Belfry can maintain one more image: sclorg's Dockerfile builds on `almalinux:10` (AppStream has `postgresql18`), and switching to it is a drop-in change without data migration.
+
 ## 2026-11-06: AlmaLinux 10 and Python 3.14 for the images
 
 The `belfry` image (and the development images built from the same Dockerfile), `belfry-ee` and the operator's `init-projects` container are based on **AlmaLinux 10** (`quay.io/almalinuxorg/almalinux:10`, `:10-minimal` for the init container), and Belfry runs on **Python 3.14**. AWX 24.6.1 uses CentOS Stream 9 and Python 3.11/3.12.
