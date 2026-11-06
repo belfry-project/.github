@@ -12,6 +12,10 @@ Discussed in [belfry#7](https://github.com/belfry-project/belfry/issues/7); the 
 - **Default execution environments follow the Belfry version.** Released installations never run jobs in unreleased EE builds. In belfry-operator, "AWX EE (latest)", "AWX EE (<version>)" and the control plane EE all use `belfry-ee:<DEFAULT_AWX_VERSION>`: `belfry-ee:X.Y.Z` in a release, `belfry-ee:main` in a build of `main`. Belfry's own defaults (`GLOBAL_JOB_EXECUTION_ENVIRONMENTS`, `CONTROL_PLANE_EXECUTION_ENVIRONMENT`, for installations without the operator) do the same from the version of the image. We chose the version tag over `:latest` so that the EE of an installation only changes when it is upgraded, together with Belfry, and not whenever a new release is published; "AWX EE (latest)" keeps its upstream name so that job templates using it keep working. ([belfry-operator#19](https://github.com/belfry-project/belfry-operator/pull/19), [belfry#34](https://github.com/belfry-project/belfry/pull/34))
 - **Chart version** = Belfry version, so `helm install --version 1.0.0` installs Belfry 1.0.0; the chart on `main` stays at `0.1.0`/`main` and is only published from releases.
 
+## 2026-11-06: Upstream version tags are prefixed
+
+The repositories were imported with their upstream history, including upstream's version tags. AWX's own first release was also `1.0.0` (2017), so releasing Belfry 1.0.0 reused that tag. In belfry the upstream tags are renamed `awx-<version>` (101 tags, `awx-1.0.0` … `awx-24.6.1`) and in belfry-operator `awx-operator-<version>` (69 tags), pointing at the same objects. Plain `X.Y.Z` and `X.Y.Z-rc.N` tags are Belfry's own. `tools/release.sh` stops when a version tag already exists at another commit. Do not push old local tags back (`git push --tags` from an old clone would recreate them): fetch with `git fetch --prune --prune-tags` first.
+
 ## 2026-11-05: Version, CRD API group and rebrand scope for 1.0
 
 Discussed in [belfry#21](https://github.com/belfry-project/belfry/issues/21).
