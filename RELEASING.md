@@ -57,7 +57,7 @@ Prerequisites: `gh` logged in with permission to create releases in all four rep
    tools/release.sh 1.0.0          # final release
    ```
 
-   For each repository in order it creates the release (`--generate-notes`, title `Belfry <version>`, pre-release for `-rc.N`), waits for its release workflow and verifies:
+   For each repository in order it creates the release (`--generate-notes`, title `Belfry <version>`, pre-release for `-rc.N`), waits for its release workflow and verifies the result. GitHub sometimes does not start the workflow for a published release: if no run has appeared 5 minutes after the release was published, `release.sh` says so, starts it itself with `gh workflow run release.yml -R belfry-project/<repo> --ref main -f version=<version> -f dry_run=false` (which builds from the release tag) and watches that run instead. It does not start a second run: it also finds manual runs of the release (it reads their version and `dry_run` from the log of the run's first step), so a rerun with `--from` picks up the run it started earlier, and it cancels a late `release` run that is still waiting for the other one (the workflows share a concurrency group per release). With `--dry-run` it only prints that command. The checks:
 
    - the GitHub release exists, is published and is (not) a pre-release;
    - the image exists for linux/amd64 and linux/arm64 and is annotated with the version;
@@ -96,7 +96,8 @@ This tags `main` again (so `1.0.0` may contain fixes after the last release cand
 
 - **A workflow fails:** `release.sh` stops and prints the run. If the failure is unrelated to the release (a flaky test, a registry timeout), rerun the failed jobs (`gh run rerun <id> -R belfry-project/<repo> --failed`) and then `tools/release.sh <version> --from <repo>`: earlier repositories are only verified, the existing release is not created again, and a finished run is not waited for again. A rerun overwrites the image tag and the release assets (`--clobber`) and replaces the image section of the release notes.
 - **The release is wrong** (the code needs a fix): for a release candidate, fix `main` and release the next `-rc.N`. Do not move a published tag. If a release has to be withdrawn, mark it in its notes, and for a final release publish `X.Y.Z+1`. Deleting a release (`gh release delete <tag> -R <repo> --cleanup-tag`) does not delete its images; a package admin removes them in the package settings.
-- **A workflow needs to run again for an existing release** (for example after fixing the workflow on `main`): `gh workflow run release.yml -R belfry-project/<repo> --ref main -f version=<tag> -f dry_run=false`. It builds from the release tag, not from `main`.
+- **A workflow needs to run again for an existing release** (for example after fixing the workflow on `main`): `gh workflow run release.yml -R belfry-project/<repo> --ref main -f version=<tag> -f dry_run=false`. It builds from the release tag, not from `main`. Then `tools/release.sh <version> --from <repo>` watches that run (the newest run of the release) and continues.
+- **GitHub did not start the release workflow:** `release.sh` starts it itself (see step 3). Do not start dry runs of a repository while it releases it: a manual run is matched by its version and `dry_run` input only once its first step has finished.
 
 ## Release outputs
 

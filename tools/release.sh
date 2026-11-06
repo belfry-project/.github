@@ -55,6 +55,8 @@ ok() { printf '  \033[32mok\033[0m  %s\n' "$*"; }
 fail() { printf '  \033[31mFAIL\033[0m %s\n' "$*" >&2; failures=$((failures + 1)); }
 die() { printf '\033[31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 failures=0
+state_dir=$(mktemp -d)
+trap 'rm -rf "$state_dir"' EXIT
 
 if $dry_run; then
   version=${version:-0.0.0-rc.0}
@@ -210,32 +212,111 @@ verify_repo() {
 
 # --- workflow runs ----------------------------------------------------------
 
-# find_run <repo> <since>: id of the newest release workflow run for this release
+# dispatch_inputs <repo> <run>: "<version> <dry_run>" of a manual run, read
+# from the log of its "Determine the version" step (the run list does not show
+# the inputs); nothing while that step has not finished
+dispatch_inputs() {
+  local repo=$1 run=$2 cache job
+  cache="${state_dir}/${repo}-${run}"
+  if [ ! -f "$cache" ]; then
+    job=$(gh run view "$run" -R "${ORG}/${repo}" --json jobs \
+      --jq '[.jobs[] | select(any(.steps[]; .name == "Determine the version" and .status == "completed"))] | .[0].databaseId // empty')
+    [ -n "$job" ] || return 0
+    gh run view "$run" -R "${ORG}/${repo}" --job "$job" --log \
+      | sed -nE 's/.*Z (version|dry_run)=([^ ]*)$/\1 \2/p' \
+      | awk '{a[$1] = $2} END {print a["version"], a["dry_run"]}' > "$cache"
+  fi
+  cat "$cache"
+}
+
+# release_runs <repo> <since>: the release workflow runs for this release,
+# newest first, as "<id> <status>" lines: the runs of the `release: published`
+# event for the tag and, because GitHub sometimes does not send that event,
+# manual runs with this version and dry_run=false started since <since> (when
+# the release was published).
+release_runs() {
+  local repo=$1 since=$2 id event status
+  gh run list -R "${ORG}/${repo}" --workflow release.yml --limit 50 \
+    --json databaseId,event,headBranch,createdAt,status \
+    --jq "[.[] | select((.event == \"release\" and .headBranch == \"${version}\")
+                     or (.event == \"workflow_dispatch\" and .createdAt >= \"${since}\"))]
+          | sort_by(.createdAt) | reverse | .[] | \"\(.databaseId) \(.event) \(.status)\"" \
+    | while read -r id event status; do
+        if [ "$event" = release ] || [ "$(dispatch_inputs "$repo" "$id")" = "${version} false" ]; then
+          echo "$id $status"
+        fi
+      done
+}
+
+# find_run <repo> <since>: id of the release workflow run for this release: the
+# one in progress, else the newest
 find_run() {
   local repo=$1 since=$2
   if $dry_run; then
     gh run list -R "${ORG}/${repo}" --workflow release.yml --event workflow_dispatch --branch main \
       --json databaseId,createdAt --jq "[.[] | select(.createdAt >= \"${since}\")] | .[0].databaseId // empty"
   else
-    gh run list -R "${ORG}/${repo}" --workflow release.yml --event release --branch "$version" \
-      --json databaseId --jq '.[0].databaseId // empty'
+    release_runs "$repo" "$since" | awk 'NR == 1 {newest = $1} $2 == "in_progress" {print $1; found = 1; exit} END {if (!found && newest) print newest}'
   fi
 }
 
-wait_for_run() {
-  local repo=$1 since=$2 run="" conclusion
-  for _ in $(seq 1 60); do
+# poll_run <repo> <since> <deadline>: find_run until it finds a run or the
+# deadline (epoch seconds) has passed
+poll_run() {
+  local repo=$1 since=$2 deadline=$3 run
+  while :; do
     run=$(find_run "$repo" "$since")
-    [ -n "$run" ] && break
+    if [ -n "$run" ] || [ "$(date +%s)" -ge "$deadline" ]; then
+      echo "$run"
+      return
+    fi
     sleep 5
   done
+}
+
+# cancel_duplicates <repo> <since> <run> [finished]: cancel the other runs for
+# this release that wait to start, e.g. a late `release` event run after
+# release.sh started the workflow itself. The release workflows have a
+# concurrency group per release (helm-charts: one for all releases), so such a
+# run waits for <run> and would then build and publish everything again. Runs
+# in progress are only cancelled once <run> has finished (before that, find_run
+# picks the run in progress).
+cancel_duplicates() {
+  local repo=$1 since=$2 run=$3 finished=${4:-} id status
+  $dry_run && return
+  while read -r id status; do
+    [ -n "$id" ] && [ "$id" != "$run" ] && [ "$status" != completed ] || continue
+    [ "$status" != in_progress ] || [ -n "$finished" ] || continue
+    echo "Cancelling the duplicate release workflow run https://github.com/${ORG}/${repo}/actions/runs/${id} (${status})"
+    gh run cancel "$id" -R "${ORG}/${repo}" > /dev/null || fail "cannot cancel run ${id} in ${repo}"
+  done < <(release_runs "$repo" "$since")
+}
+
+wait_for_run() {
+  local repo=$1 since=$2 run="" conclusion deadline
+  local dispatch=(gh workflow run release.yml -R "${ORG}/${repo}" --ref main -f version="$version" -f dry_run=false)
+  # Wait for the run up to 5 minutes after <since>: when the release was
+  # published, or when the dry run was started.
+  deadline=$(( $(jq -rn --arg t "$since" '$t | fromdateiso8601') + 300 ))
+  run=$(poll_run "$repo" "$since" "$deadline")
+  if [ -z "$run" ] && ! $dry_run; then
+    printf '  \033[33mGitHub did not start the release workflow of %s for the published release.\033[0m\n' "$repo"
+    echo "  Starting it: ${dispatch[*]}"
+    "${dispatch[@]}"
+    run=$(poll_run "$repo" "$since" $(( $(date +%s) + 300 )))
+  fi
   [ -n "$run" ] || die "no release workflow run appeared in ${repo}"
+  if $dry_run; then
+    echo "  (For a release, if GitHub does not start the workflow for the published release, release.sh runs: ${dispatch[*]})"
+  fi
   echo "Workflow run: https://github.com/${ORG}/${repo}/actions/runs/${run}"
+  cancel_duplicates "$repo" "$since" "$run"
   conclusion=$(gh run view "$run" -R "${ORG}/${repo}" --json status,conclusion --jq 'if .status == "completed" then .conclusion else "" end')
   if [ -z "$conclusion" ]; then
     gh run watch "$run" -R "${ORG}/${repo}" --interval 30 --exit-status > /dev/null || true
     conclusion=$(gh run view "$run" -R "${ORG}/${repo}" --json conclusion --jq .conclusion)
   fi
+  cancel_duplicates "$repo" "$since" "$run" finished
   if [ "$conclusion" != success ]; then
     gh run view "$run" -R "${ORG}/${repo}" | tail -25
     die "the release workflow of ${repo} ended with '${conclusion}'. Fix it (e.g. gh run rerun ${run} -R ${ORG}/${repo} --failed), then rerun this script with --from ${repo}"
@@ -297,6 +378,9 @@ for repo in "${REPOS[@]}"; do
     if $prerelease; then args+=(--prerelease --latest=false); else args+=(--latest); fi
     gh release create "$version" -R "${ORG}/${repo}" "${args[@]}"
   fi
+  # Runs for a release are matched from the time it was published, also when
+  # it was created by an earlier invocation (--from).
+  $dry_run || since=$(gh release view "$version" -R "${ORG}/${repo}" --json publishedAt --jq .publishedAt)
   wait_for_run "$repo" "$since"
   verify_repo "$repo"
   [ "$failures" -eq 0 ] || die "${failures} check(s) failed for ${repo}; fix them and rerun with --from ${repo}"
