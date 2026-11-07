@@ -2,6 +2,10 @@
 
 Decisions about the Belfry project that affect users, with the reasoning, so they can be reviewed later. Newest first.
 
+## 2026-11-07: Direct playbook runs from projects
+
+Belfry can run a playbook of a project without a job template (`POST /api/v2/projects/{id}/launch_playbook/`, [belfry#50](https://github.com/belfry-project/belfry/issues/50)). It is **on by default**; the Jobs setting `ALLOW_DIRECT_PLAYBOOK_LAUNCH` turns it off. Why: it grants nothing new. A user needs use on the project, inventory and credentials, which already lets them create a job template from the same resources and run it, so the endpoint only saves the template round trip. Organizations that want every run to go through reviewed job templates can turn it off.
+
 ## 2026-11-07: Third-party images are not mirrored
 
 Belfry uses third-party images from their public registries: Redis (`docker.io/redis`), PostgreSQL (`quay.io/sclorg/postgresql-18-c10s`) and the init-projects image (`quay.io/almalinuxorg/almalinux:10-minimal`). Mirroring them to ghcr.io would add a copy to keep up to date (and to scan, attest and fix) without a gain for users, and could delay their security updates. Installations that need their own registry, such as disconnected clusters, mirror the images themselves and set the image fields of the `AWX` resource (see the install docs).
