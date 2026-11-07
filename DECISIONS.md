@@ -2,6 +2,12 @@
 
 Decisions about the Belfry project that affect users, with the reasoning, so they can be reviewed later. Newest first.
 
+## 2026-11-07: Third-party images are not mirrored
+
+Belfry uses third-party images from their public registries: Redis (`docker.io/redis`), PostgreSQL (`quay.io/sclorg/postgresql-18-c10s`) and the init-projects image (`quay.io/almalinuxorg/almalinux:10-minimal`). Mirroring them to ghcr.io would add a copy to keep up to date (and to scan, attest and fix) without a gain for users, and could delay their security updates. Installations that need their own registry, such as disconnected clusters, mirror the images themselves and set the image fields of the `AWX` resource (see the install docs).
+
+`image-mirror` only holds images Belfry has to **rebuild**: receptor and ansible-operator, built with updated Go modules because the upstream images had unfixed vulnerabilities. They are not mirrors and are only kept while upstream doesn't publish fixed images.
+
 ## 2026-11-06: PostgreSQL 18 for the managed database
 
 The operator's managed database moves from PostgreSQL 15 (`quay.io/sclorg/postgresql-15-c9s`, supported until November 2027) to 18 (`quay.io/sclorg/postgresql-18-c10s`, supported until November 2030); sclorg publishes no 17. Existing installations are migrated on the first reconcile (a dump into a new PostgreSQL 18 instance, which needs a second volume of the same size and some downtime); external databases are not touched. Tested from AWX 24.6.1 and from belfry-operator 1.0.0, including backup and restore across versions ([belfry-operator#30](https://github.com/belfry-project/belfry-operator/pull/30)).
