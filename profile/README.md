@@ -4,7 +4,7 @@
 
 Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry aims to keep a working, regularly released, fully open distribution available, built and hosted entirely on GitHub.
 
-> **Belfry 1.1.0 is released** ([release notes](https://github.com/belfry-project/belfry/releases/tag/1.1.0)): AlmaLinux 10, Python 3.14 and PostgreSQL 18. [Install it](https://belfry-project.github.io/docs/install/), [upgrade from 1.0.0](https://belfry-project.github.io/docs/upgrade/) or [migrate from AWX 24.6.1](https://belfry-project.github.io/docs/migrate/).
+> **Belfry 1.2.0 is released** ([release notes](https://github.com/belfry-project/belfry/releases/tag/1.2.0)): run playbooks directly from projects, search hosts by facts, host overview, an API explorer on every instance, and a redesigned browsable API. [Install it](https://belfry-project.github.io/docs/install/), [upgrade](https://belfry-project.github.io/docs/upgrade/) or [migrate from AWX 24.6.1](https://belfry-project.github.io/docs/migrate/).
 
 **[Documentation →](https://belfry-project.github.io/docs/)**: installing Belfry on Kubernetes, [migrating from AWX](https://belfry-project.github.io/docs/migrate/), backups, execution environments, and the [operator](https://belfry-project.github.io/docs/operator/) and [API](https://belfry-project.github.io/docs/belfry/) reference.
 
