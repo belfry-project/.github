@@ -17,7 +17,7 @@ The [contributing guide](https://belfry-project.github.io/docs/contributing/) on
 - Fill in the pull request template. belfry and belfry-operator have their own, with `##### SUMMARY` and `##### ISSUE TYPE` headings; belfry-operator's CI checks that the issue type is exactly one of the listed lines.
 - Reference the issue: `Fixes #123` or `Part of #123`.
 - **Keep diffs small and focused.** Belfry stays close to upstream AWX so that upstream changes can still be merged; avoid reformatting, renaming or moving code you do not need to change.
-- Pull requests are usually merged with rebase, so keep the commits clean (squash fixups yourself).
+- Pull requests are usually merged with rebase, so keep the commits clean (squash fixups yourself) Upstream syncs are the exception: they are merged with a merge commit.
 - For changes users should know about, also add an entry to [`changes.yml`](https://github.com/belfry-project/belfry-project.github.io/blob/main/changes.yml), which feeds the [comparison page](https://belfry-project.github.io/).
 
 ## Commits
@@ -32,7 +32,7 @@ All checks run on GitHub Actions and must pass before a pull request is merged. 
 
 ## Upstream projects
 
-Belfry is based on [ansible/awx](https://github.com/ansible/awx), [ansible/awx-operator](https://github.com/ansible/awx-operator), [ansible/awx-ee](https://github.com/ansible/awx-ee), [ansible/ansible-ui](https://github.com/ansible/ansible-ui) and [ansible-community/awx-operator-helm](https://github.com/ansible-community/awx-operator-helm). Belfry does not open issues or pull requests in those projects on its own behalf; if you want a fix upstream too, contribute it there yourself, under their rules.
+Belfry is based on [ansible/awx](https://github.com/ansible/awx), [ansible/awx-operator](https://github.com/ansible/awx-operator), [ansible/awx-ee](https://github.com/ansible/awx-ee), [ansible/ansible-ui](https://github.com/ansible/ansible-ui) and [ansible-community/awx-operator-helm](https://github.com/ansible-community/awx-operator-helm). Belfry does not open issues or pull requests in those projects on its own behalf; if you want a fix upstream too, contribute it there yourself, under their rules. How upstream changes are merged into Belfry, and the weekly check that lists them, is described in [SYNCING.md](SYNCING.md).
 
 ## Code of conduct
 
