@@ -4,7 +4,7 @@
 
 Upstream AWX releases have been paused since version 2.19.1 (July 2024). Belfry aims to keep a working, regularly released, fully open distribution available, built and hosted entirely on GitHub.
 
-> **Belfry 1.3.0 is released** ([release notes](https://github.com/belfry-project/belfry/releases/tag/1.3.0)): save direct playbook runs as job templates, and fixes. [Install it](https://belfry-project.github.io/docs/install/), [upgrade](https://belfry-project.github.io/docs/upgrade/) or [migrate from AWX 24.6.1](https://belfry-project.github.io/docs/migrate/).
+> **Belfry 1.3.1 is released** ([release notes](https://github.com/belfry-project/belfry/releases/tag/1.3.1)): upstream fixes, security updates and podman 6 support. [Install it](https://belfry-project.github.io/docs/install/), [upgrade](https://belfry-project.github.io/docs/upgrade/) or [migrate from AWX 24.6.1](https://belfry-project.github.io/docs/migrate/).
 
 **[Documentation →](https://belfry-project.github.io/docs/)**: installing Belfry on Kubernetes, [migrating from AWX](https://belfry-project.github.io/docs/migrate/), backups, execution environments, and the [operator](https://belfry-project.github.io/docs/operator/) and [API](https://belfry-project.github.io/docs/belfry/) reference.
 
